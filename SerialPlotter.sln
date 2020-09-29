@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "SerialPlotter", "SerialPlotter.vbproj", "{526E44B9-4ACD-4762-8398-53E9575EE298}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{526E44B9-4ACD-4762-8398-53E9575EE298}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{526E44B9-4ACD-4762-8398-53E9575EE298}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{526E44B9-4ACD-4762-8398-53E9575EE298}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{526E44B9-4ACD-4762-8398-53E9575EE298}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {47E6D935-8A70-4FD8-8EE5-131EA4784B2C}
+	EndGlobalSection
+EndGlobal
