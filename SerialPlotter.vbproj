@@ -67,16 +67,22 @@
     <ApplicationIcon>graphs_icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>B3B15A42E271E63680A9EDB4F8ED9195170AC4DA</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>318CFD680ED525DB94DD20EC202AE81C423B855B</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>SerialPlotter_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>SerialPlotter_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>SerialPlotter_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -150,6 +156,7 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="App.config" />
+    <None Include="SerialPlotter_1_TemporaryKey.pfx" />
     <None Include="SerialPlotter_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>

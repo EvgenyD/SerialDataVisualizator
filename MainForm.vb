@@ -1,7 +1,7 @@
 ﻿Imports System
 
 Public Class MainForm
-    Dim sys_version As String = "Serial data visualization v0.4"
+    Dim sys_version As String = "Serial data visualization v0.5"
     Dim max_number_of_parameters As Integer = 16
     Dim min_size As New Point(480, 240)
     Dim list_of_serial_rates() As String = {"1200", "2400", "4800", "9600", "14400", "19200", "28800", "38400", "57600", "115200", "230400"}
@@ -407,18 +407,18 @@ Public Class MainForm
         AddHandler ListOfFiles.MouseLeave, AddressOf ListOfFiles_MouseLeave
 
 
-
+        '.BackColor = ChannelColors(i Mod 10),
         ReDim ChannelShow_CB(30 - 1)
         For i = 0 To ChannelShow_CB.Length - 1
             ChannelShow_CB(i) = New CheckBox With {
             .Appearance = Appearance.Normal,
-            .TextAlign = ContentAlignment.MiddleCenter,
+            .TextAlign = ContentAlignment.MiddleLeft,
             .Text = ChannelNames(i Mod 30),
-            .BackColor = ChannelColors(i Mod 10),
-            .ForeColor = ChannelColorsCompl(i Mod 10),
+            .ForeColor = ChannelColors(i Mod 10),
             .Checked = False,
+            .FlatStyle = FlatStyle.Standard,
             .Padding = New Padding(2, 0, 0, 0),
-            .Size = New Point(30, 25),
+            .Size = New Point(60, 25),
             .Location = New Point(setup_panel.Location.X, setup_panel.Location.Y + setup_panel.Height + 25 * i), '.Location = New Point(input_buffer_tb.Location.X + 25 * i, 55),
             .Anchor = AnchorStyles.Top + AnchorStyles.Left,
             .Visible = False
@@ -448,6 +448,7 @@ Public Class MainForm
             .Size = New Size(ClientSize.Width - output_panel.Width - output_panel.Location.X - ChannelShow_CB(0).Width - 2 * marg, ClientSize.Height - setup_panel.Height - setup_panel.Location.Y - 2 * marg),
             .Location = New Point(output_panel.Location.X + output_panel.Width + ChannelShow_CB(0).Width + marg, setup_panel.Location.Y + setup_panel.Height + marg),
             .Anchor = AnchorStyles.Left + AnchorStyles.Right + AnchorStyles.Bottom + AnchorStyles.Top,
+            .Enabled = False,
             .BackColor = Color.White 'MyBase.BackColor
          }
         MyBase.Controls.Add(MainPlot)
@@ -567,7 +568,7 @@ Public Class MainForm
         AddHandler active_serial.DataReceived, AddressOf Serial_DataReceived
 
         UpdatePackage = New Timer With {
-            .Interval = 8,
+            .Interval = 5,
             .Enabled = True
          }
         AddHandler UpdatePackage.Tick, AddressOf UpdatePackage_Tick
@@ -867,47 +868,55 @@ Public Class MainForm
         If IsDataReady Then
             Recived_Report(ReceivedMsg)
             IsDataReady = False
-            Can_try_again = True
+            'Can_try_again = True
         End If
 
 
 
-        If Can_try_again Then
-            Can_try_again = False
-            'For _i = 0 To 7
-            '    'IsSendingNewSettings = True
-            '    If (DP_Hr_needUpdating(_i) Or Timer_needUpdate) Then 'Or On_needUpdate(_i)
-            '        Send_New_Settings()
-            '        Exit For
-            '    End If
-            '    '  Can_try_again = True
-            '    'IsSendingNewSettings = False
-            'Next
+        'If Can_try_again Then
+        '    Can_try_again = False
+        '    'For _i = 0 To 7
+        '    '    'IsSendingNewSettings = True
+        '    '    If (DP_Hr_needUpdating(_i) Or Timer_needUpdate) Then 'Or On_needUpdate(_i)
+        '    '        Send_New_Settings()
+        '    '        Exit For
+        '    '    End If
+        '    '    '  Can_try_again = True
+        '    '    'IsSendingNewSettings = False
+        '    'Next
 
-        End If
+        'End If
 
     End Sub
 
     Private Sub Recived_Report(_msg As String)
         Dim num As Integer = 0
-
+        'Dim a As DateTime = Now
+        '
+        'Dim nam As String = ""
         input_buffer_tb.Text = _msg
         receivedData = _msg.Split(sys_delims, StringSplitOptions.RemoveEmptyEntries)
+        'Dim b As DateTime = Now
 
         'output_buffer_tb.Text = ""
         For i = 0 To receivedData.Length - 1
             If IsNumeric(receivedData(i)) Then
                 'output_buffer_tb.Text += receivedData(i) + "^"
-                MainPlot.Series(num).Points.Item(Current_Point).YValues(0) = receivedData(i)
+                MainPlot.Series(num).Points.Item(Current_Point).YValues(0) = CDbl(receivedData(i))
                 MainPlot.Series(num).Points.Item(Current_Point).IsEmpty = False
                 If Current_Point < sys_plotsize Then
                     MainPlot.Series(num).Points.Item(Current_Point + 1).IsEmpty = True
                 End If
                 MainPlot.Annotations(num).X = Current_Point
-                MainPlot.Annotations(num).Y = receivedData(i)
+                MainPlot.Annotations(num).Y = MainPlot.Series(num).Points.Item(Current_Point).YValues(0)
+
                 num += 1
+
             End If
         Next
+
+        'Dim c As DateTime = Now
+
 
         Current_Point = Current_Point + 1
         If Current_Point >= sys_plotsize Then Current_Point = 0
@@ -917,7 +926,7 @@ Public Class MainForm
             MainPlot.ChartAreas(0).RecalculateAxesScale()
         End If
 
-        set_Visible_channels(num)
+        set_Visible_channels(num, receivedData)
         If log_data_cb.Checked Then
             Try
                 'Using outputFile As New StreamWriter(file_path + "\" + file_name, True)
@@ -932,9 +941,12 @@ Public Class MainForm
                 'status_logging.Text = "Log File In use!"
             End Try
         End If
+        'Dim d As DateTime = Now
 
+        'Dim msg As String = (b - a).TotalMilliseconds.ToString + " / " + (c - b).TotalMilliseconds.ToString + " / " + (d - c).TotalMilliseconds.ToString
+        'output_buffer_tb.Text = msg
     End Sub
-    Private Sub set_Visible_channels(_num As Integer)
+    Private Sub set_Visible_channels(_num As Integer, ByRef _income() As String)
         If _num = ActiveChannels Then Exit Sub
         If _num < 1 Then Exit Sub
         If _num > ChannelShow_CB.Length - 1 Then _num = ChannelShow_CB.Length - 1
@@ -949,6 +961,26 @@ Public Class MainForm
             MainPlot.Series(i).Enabled = False
             MainPlot.Annotations(i).Visible = False
         Next
+
+        ' Update variable names
+        Dim num As Integer = 0
+        Dim nam As String = ""
+        Dim cnt As Integer = 1
+
+        For i = 0 To receivedData.Length - 1
+            If IsNumeric(receivedData(i)) Then
+                If nam <> "" Then
+                    ChannelShow_CB(num).Text = nam + cnt.ToString
+                    cnt += 1
+                    'nam = ""
+                End If
+                num += 1
+            Else
+                nam = receivedData(i)
+                cnt = 1
+            End If
+        Next
+
         MainPlot.Refresh()
         ActiveChannels = _num
     End Sub
